@@ -138,61 +138,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const report = reportData.output?.[0]?.content?.find(c => c.type === 'output_text')?.text
       || '보고서를 생성할 수 없습니다.';
 
-    // 헤어스타일 이미지 생성
-    let hairstyleImage: string | null = null;
-
-    try {
-      // Base64 데이터에서 실제 이미지 데이터 추출
-      const base64Data = photo.replace(/^data:image\/\w+;base64,/, '');
-      const binaryData = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
-      const blob = new Blob([binaryData], { type: 'image/png' });
-
-      const formData = new FormData();
-      formData.append('image', blob, 'photo.png');
-      formData.append('prompt', `You are an expert hairstylist. Create a 3x3 grid showing 9 different hairstyle recommendations for this person.
-
-CRITICAL RULES:
-1. DO NOT modify, change, or alter the person's face in any way
-2. Keep the exact same facial features, skin tone, and face shape
-3. Only change the hairstyle (hair color, length, style, texture)
-4. The face must remain 100% identical to the original photo
-5. Include a brief Korean label for each hairstyle
-
-Show diverse styles: short, medium, long, curly, straight, layered, with bangs, without bangs, different colors that suit their skin tone.`);
-      formData.append('model', 'gpt-image-1');
-      formData.append('n', '1');
-      formData.append('size', '1024x1024');
-      formData.append('quality', 'high');
-      formData.append('background', 'auto');
-      formData.append('moderation', 'auto');
-      formData.append('input_fidelity', 'high');
-
-      const imageResponse = await fetch('https://api.openai.com/v1/images/edits', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${context.env.OPENAI_API_KEY}`,
-        },
-        body: formData,
-      });
-
-      if (imageResponse.ok) {
-        const imageData = await imageResponse.json() as {
-          data: Array<{ b64_json: string }>;
-        };
-
-        if (imageData.data?.[0]?.b64_json) {
-          hairstyleImage = `data:image/png;base64,${imageData.data[0].b64_json}`;
-        }
-      } else {
-        const errorText = await imageResponse.text();
-        console.error('Hairstyle API Error:', errorText);
-      }
-    } catch (imgError) {
-      console.error('Hairstyle generation error:', imgError);
-    }
-
     return new Response(
-      JSON.stringify({ report, hairstyleImage }),
+      JSON.stringify({ report }),
       { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
     );
 
