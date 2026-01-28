@@ -645,21 +645,35 @@ function App() {
           </div>
 
           <div className="reference-section">
-            <h4 className="reference-title">Reference Examples</h4>
+            <h4 className="reference-title">Reference Examples (클릭하여 선택)</h4>
             <div className="reference-grid">
-              <div className="reference-card correct">
+              <div
+                className={`reference-card correct selectable ${photo === 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800' ? 'selected' : ''}`}
+                onClick={() => {
+                  setPhoto('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800')
+                  setIsAnalyzing(true)
+                  setTimeout(() => setIsAnalyzing(false), 1500)
+                }}
+              >
                 <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400" alt="Correct pose" />
                 <div className="reference-badge correct">
                   <span className="material-icon">done</span>
                 </div>
-                <p className="reference-label">Correct: Neutral Pose</p>
+                <p className="reference-label">Neutral Pose</p>
               </div>
-              <div className="reference-card incorrect">
-                <img src="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=400" alt="Incorrect pose" />
-                <div className="reference-badge incorrect">
-                  <span className="material-icon">close</span>
+              <div
+                className={`reference-card selectable ${photo === 'https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=800' ? 'selected' : ''}`}
+                onClick={() => {
+                  setPhoto('https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=800')
+                  setIsAnalyzing(true)
+                  setTimeout(() => setIsAnalyzing(false), 1500)
+                }}
+              >
+                <img src="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=400" alt="Streetwear pose" />
+                <div className="reference-badge neutral">
+                  <span className="material-icon">person</span>
                 </div>
-                <p className="reference-label">Incorrect: Too Baggy</p>
+                <p className="reference-label">Streetwear</p>
               </div>
             </div>
           </div>

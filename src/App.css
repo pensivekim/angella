@@ -1169,6 +1169,30 @@
   background: #ef4444;
 }
 
+.reference-badge.neutral {
+  background: var(--primary);
+}
+
+/* Selectable Reference Card */
+.reference-card.selectable {
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.reference-card.selectable:hover {
+  transform: scale(1.03);
+  box-shadow: 0 8px 24px rgba(236, 19, 236, 0.3);
+}
+
+.reference-card.selectable.selected {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.reference-card.selectable.selected::after {
+  background: linear-gradient(0deg, rgba(236, 19, 236, 0.3) 0%, transparent 50%);
+}
+
 .reference-badge .material-icon {
   font-size: 12px;
 }
