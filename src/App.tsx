@@ -43,6 +43,7 @@ function App() {
   const [selectedColor, setSelectedColor] = useState<string>('neutral')
   const [selectedOccasions, setSelectedOccasions] = useState<string[]>(['daily'])
   const [report, setReport] = useState<string | null>(null)
+  const [hairstyleImage, setHairstyleImage] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isDragging, setIsDragging] = useState(false)
@@ -182,6 +183,7 @@ function App() {
       }
 
       setReport(data.report)
+      setHairstyleImage(data.hairstyleImage || null)
     } catch (err) {
       setError(err instanceof Error ? err.message : '오류가 발생했습니다.')
     } finally {
@@ -192,6 +194,7 @@ function App() {
 
   const handleReset = () => {
     setReport(null)
+    setHairstyleImage(null)
     setPhoto(null)
     setHeight('')
     setWeight('')
@@ -494,6 +497,17 @@ function App() {
                     분석된 사진
                   </h2>
                   <img src={photo} alt="내 사진" className="my-photo-image" />
+                </div>
+              )}
+
+              {hairstyleImage && (
+                <div className="hairstyle-section">
+                  <h2 className="section-title">
+                    <span className="material-icon text-primary">content_cut</span>
+                    추천 헤어스타일
+                  </h2>
+                  <p className="hairstyle-desc">얼굴형과 스타일에 어울리는 헤어스타일 참고 이미지입니다.</p>
+                  <img src={hairstyleImage} alt="추천 헤어스타일" className="hairstyle-image" />
                 </div>
               )}
             </div>

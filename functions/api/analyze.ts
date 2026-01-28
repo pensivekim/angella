@@ -138,8 +138,60 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const report = reportData.output?.[0]?.content?.find(c => c.type === 'output_text')?.text
       || '보고서를 생성할 수 없습니다.';
 
+    // 헤어스타일 추천 이미지 생성 (사용자 얼굴 사용 안함 - 일반 참고 이미지)
+    let hairstyleImage: string | null = null;
+
+    try {
+      const hairstylePrompt = `Create a professional hairstyle reference guide image showing a 3x3 grid of 9 different hairstyle options.
+
+IMPORTANT RULES:
+- DO NOT show any real human faces
+- Use elegant silhouettes, mannequin heads, or artistic hair illustrations only
+- Show hair from behind or side angles to focus on the hairstyle, not faces
+- Each style should be clearly different: short, medium, long, curly, straight, wavy, layered, with bangs, without bangs
+
+Style preference: ${styleLabels[style] || style}
+Color preference: ${colorLabels[colorPreference] || colorPreference}
+
+Include subtle Korean labels for each hairstyle (e.g., 숏컷, 레이어드, 웨이브 등).
+Use a clean, minimalist aesthetic with soft lighting.
+Professional fashion magazine style layout.`;
+
+      const imageResponse = await fetch('https://api.openai.com/v1/images/generations', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${context.env.OPENAI_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'gpt-image-1',
+          prompt: hairstylePrompt,
+          n: 1,
+          size: '1024x1024',
+          quality: 'high',
+        }),
+      });
+
+      if (imageResponse.ok) {
+        const imageData = await imageResponse.json() as {
+          data: Array<{ b64_json?: string; url?: string }>;
+        };
+
+        if (imageData.data?.[0]?.b64_json) {
+          hairstyleImage = `data:image/png;base64,${imageData.data[0].b64_json}`;
+        } else if (imageData.data?.[0]?.url) {
+          hairstyleImage = imageData.data[0].url;
+        }
+      } else {
+        const errorText = await imageResponse.text();
+        console.error('Hairstyle API Error:', errorText);
+      }
+    } catch (imgError) {
+      console.error('Hairstyle generation error:', imgError);
+    }
+
     return new Response(
-      JSON.stringify({ report }),
+      JSON.stringify({ report, hairstyleImage }),
       { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
     );
 
